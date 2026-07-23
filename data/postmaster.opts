@@ -1,0 +1,1 @@
+C:/Users/Player 1/PycharmProjects/MyLibrary/.venv/Lib/site-packages/pgserver/pginstall/bin/postgres.exe "-D" "C:/Users/Player 1/PycharmProjects/MyLibrary/data" "-h" "127.0.0.1" "-p" "3568"

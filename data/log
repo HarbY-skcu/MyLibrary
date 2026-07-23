@@ -1,0 +1,33 @@
+2026-07-02 19:06:57.065 GMT [6200] LOG:  starting PostgreSQL 16.2 on x86_64-pc-mingw64, compiled by gcc.exe (x86_64-posix-seh-rev2, Built by MinGW-W64 project) 12.2.0, 64-bit
+2026-07-02 19:06:57.066 GMT [6200] LOG:  listening on IPv4 address "127.0.0.1", port 13060
+2026-07-02 19:06:57.099 GMT [16096] LOG:  database system was interrupted; last known up at 2026-07-02 18:56:38 GMT
+2026-07-02 19:07:02.765 GMT [16096] LOG:  could not open file "./log": sharing violation
+2026-07-02 19:07:02.765 GMT [16096] DETAIL:  Continuing to retry for 30 seconds.
+2026-07-02 19:07:02.765 GMT [16096] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
+2026-07-02 19:07:38.417 GMT [5912] LOG:  starting PostgreSQL 16.2 on x86_64-pc-mingw64, compiled by gcc.exe (x86_64-posix-seh-rev2, Built by MinGW-W64 project) 12.2.0, 64-bit
+2026-07-02 19:07:38.417 GMT [5912] LOG:  listening on IPv4 address "127.0.0.1", port 13062
+2026-07-02 19:07:38.455 GMT [16104] LOG:  database system was interrupted; last known up at 2026-07-02 18:56:38 GMT
+2026-07-02 19:07:44.095 GMT [16104] LOG:  could not open file "./log": sharing violation
+2026-07-02 19:07:44.095 GMT [16104] DETAIL:  Continuing to retry for 30 seconds.
+2026-07-02 19:07:44.095 GMT [16104] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
+2026-07-02 19:09:03.451 GMT [20584] LOG:  starting PostgreSQL 16.2 on x86_64-pc-mingw64, compiled by gcc.exe (x86_64-posix-seh-rev2, Built by MinGW-W64 project) 12.2.0, 64-bit
+2026-07-02 19:09:03.452 GMT [20584] LOG:  listening on IPv4 address "127.0.0.1", port 8143
+2026-07-02 19:09:03.483 GMT [3160] LOG:  database system was interrupted; last known up at 2026-07-02 18:56:38 GMT
+2026-07-02 19:09:09.136 GMT [3160] LOG:  could not open file "./log": sharing violation
+2026-07-02 19:09:09.136 GMT [3160] DETAIL:  Continuing to retry for 30 seconds.
+2026-07-02 19:09:09.136 GMT [3160] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
+2026-07-02 19:11:07.209 GMT [16660] LOG:  starting PostgreSQL 16.2 on x86_64-pc-mingw64, compiled by gcc.exe (x86_64-posix-seh-rev2, Built by MinGW-W64 project) 12.2.0, 64-bit
+2026-07-02 19:11:07.210 GMT [16660] LOG:  listening on IPv4 address "127.0.0.1", port 3568
+2026-07-02 19:11:07.240 GMT [21892] LOG:  database system was interrupted; last known up at 2026-07-02 18:56:38 GMT
+2026-07-02 19:11:13.006 GMT [21892] LOG:  could not open file "./log": sharing violation
+2026-07-02 19:11:13.006 GMT [21892] DETAIL:  Continuing to retry for 30 seconds.
+2026-07-02 19:11:13.006 GMT [21892] HINT:  You might have antivirus, backup, or similar software interfering with the database system.
+2026-07-02 19:11:40.813 GMT [21892] LOG:  syncing data directory (fsync), elapsed time: 33.57 s, current path: ./pg_commit_ts
+2026-07-02 19:11:40.822 GMT [21892] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-07-02 19:11:40.827 GMT [21892] LOG:  invalid record length at 0/1549B70: expected at least 24, got 0
+2026-07-02 19:11:40.827 GMT [21892] LOG:  redo is not required
+2026-07-02 19:11:40.833 GMT [23500] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-07-02 19:11:40.840 GMT [23500] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.007 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB; lsn=0/1549B70, redo lsn=0/1549B70
+2026-07-02 19:11:40.856 GMT [16660] LOG:  database system is ready to accept connections
+2026-07-03 02:57:31.343 GMT [14140] ERROR:  canceling statement due to user request
+2026-07-03 02:57:31.343 GMT [22684] ERROR:  canceling statement due to user request
