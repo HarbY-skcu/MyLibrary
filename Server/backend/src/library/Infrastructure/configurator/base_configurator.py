@@ -14,7 +14,7 @@ class StaticConfigReader(ConfigReader):
   ) -> None:
     self._list_of_directories.append('C:\\Users\\Player 1\\Downloads')
     self._list_of_book_types.extend(('.pdf', '.epub'))
-    self._uri.append()
+    self._uri.append('test uri')
 
   def get_book_types(
       self
@@ -26,6 +26,7 @@ class StaticConfigReader(ConfigReader):
   ) -> List[str]:
     return self._list_of_directories
 
-  def _get_storage_location(
+  def get_storage_location(
       self
   ) -> List[str]:
+    return self._uri

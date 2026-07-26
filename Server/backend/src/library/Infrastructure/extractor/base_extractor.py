@@ -40,15 +40,22 @@ class WindowsFileSystemExtractor(
   ) -> Iterator[Book]:
     for directory in self.directories:
       dir_path = Path(directory)
-      list_of_book_locations = list()
-      for file_type in self.file_types:
-        valid_files = dir_path.glob(f'{file_type}')
-        list_of_book_locations.extend(valid_files)
+      list_of_book_locations =  self._get_book_paths(dir_path)
       if not list_of_book_locations:
         self.invalid_directories.append(directory)
         continue
       for book_locations in list_of_book_locations:
         yield self._create_book(book_locations)
+
+  def _get_book_paths(
+      self,
+      directory: Path
+  ) -> List[Path]:
+    book_locations = list()
+    for file_type in self.file_types:
+      valid_files = directory.glob(f'{file_type}')
+      book_locations.extend(valid_files)
+    return book_locations
 
   @staticmethod
   def _create_book(

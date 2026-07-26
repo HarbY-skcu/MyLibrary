@@ -4,7 +4,7 @@ from ..ports.repository import LibraryRepository
 from ...Domain.data.books import Book
 from ...Domain.data.library import Library
 
-class PersistBooksToApp:
+class PersistBooksToAppFeature:
   def __init__(
       self,
       reader: BookExtractor,
@@ -15,32 +15,41 @@ class PersistBooksToApp:
     self.repository = repository
     self.config = config
 
-  def collect_books(
+  def collect_all_books(
       self
   ) -> Library:
-    directories = self.config.get_searched_dictionaries()
-    book_types = self.config.get_book_types()
-    self.reader.set_search_directories(directories)
-    self.reader.set_file_types(book_types)
+    try:
+      directories = self.config.get_searched_dictionaries()
+      book_types = self.config.get_book_types()
+      self.reader.set_search_directories(directories)
+      self.reader.set_file_types(book_types)
 
-    my_library = Library()
+      my_library = Library()
 
-    for book in self.reader.extract_all_books():
-      my_library.add_to_list_of_books(book)
+      for book in self.reader.extract_all_books():
+        my_library.add_to_list_of_books(book)
 
-    return my_library
+      if not my_library.list_of_books:
+        raise ValueError('No books available in designated locations, please try again')
 
-  def persist_to_new_library(
+      return my_library
+    except Exception as e:
+      raise e
+
+  def persist_all_books_to_new_library(
       self,
       new_library: Library
   ) -> bool:
+    try:
+      if not self.repository.check_if_created():
+        raise FileNotFoundError
 
-    if not self.repository.check_if_created():
-      self.repository.set_up_library()
+      if self.repository.check_if_full():
+        self.repository.clear_library()
 
-    if self.repository.check_if_full():
-      self.repository.clear_library()
+      self.repository.store_library(new_library)
 
-    self.repository.store_library(new_library)
-
-    return self.repository.check_if_full()
+      return self.repository.check_if_full()
+    except FileNotFoundError as e:
+      print("Library does not yet exist")
+      raise e
