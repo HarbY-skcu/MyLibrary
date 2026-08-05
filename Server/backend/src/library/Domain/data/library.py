@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from books import Book
+from .books import Book
 from typing import List, Iterator
 
 

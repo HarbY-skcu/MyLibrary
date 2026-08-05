@@ -1,24 +1,32 @@
 from typing import List
+from pathlib import Path
 
 from ...Application.ports.configurator import ConfigReader
 
 class StaticConfigReader(ConfigReader):
-  def __init__(self):
-    self._list_of_book_types = list()
-    self._list_of_directories = list()
-    self._uri = list()
-    self._set_up_vars()
-
-  def _set_up_vars(
-      self
-  ) -> None:
-    self._list_of_directories.append('C:\\Users\\Player 1\\Downloads')
-    self._list_of_book_types.extend(('.pdf', '.epub'))
-    self._uri.append('test uri')
+  def __init__(
+      self,
+      book_types: List[str] | None = None,
+      directories: List[str] | None = None,
+      uri: str | None = None
+  ):
+    self._list_of_book_types = (
+      book_types
+      if book_types is not None
+      else ['.pdf', '.epub']
+    )
+    self._list_of_directories = (
+      directories
+      if book_types is not None
+      else [str(Path.home() / 'Downloads')]
+    )
+    self._uri = uri
 
   def get_book_types(
       self
   ) -> List[str]:
+    if not self._list_of_book_types:
+      raise ValueError('No designated book types')
     return self._list_of_book_types
 
   def get_search_directories(
@@ -28,5 +36,7 @@ class StaticConfigReader(ConfigReader):
 
   def get_storage_location(
       self
-  ) -> List[str]:
+  ) -> str:
+    if not self._uri:
+      raise ValueError('No designated storage location')
     return self._uri

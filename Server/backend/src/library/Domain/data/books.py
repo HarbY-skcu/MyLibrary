@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import date
 
+from ...Infrastructure.configurator.base_configurator import StaticConfigReader
+
 @dataclass
 class Book:
   title: str = field(
@@ -45,5 +47,6 @@ class Book:
   def __post_init__(self):
     self._add_default_access_date()
 
-    if self.file_type not in ['pdf', 'epub']:
+    allowed_file_types = StaticConfigReader().get_book_types()
+    if self.file_type not in allowed_file_types:
       raise ValueError("Book file type must be 'epub' or 'pdf'")

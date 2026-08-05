@@ -19,18 +19,21 @@ class PersistBooksToAppFeature:
       self
   ) -> Library:
     try:
-      directories = self.config.get_searched_dictionaries()
+      directories = self.config.get_search_directories()
       book_types = self.config.get_book_types()
       self.reader.set_search_directories(directories)
       self.reader.set_file_types(book_types)
 
       my_library = Library()
-
       for book in self.reader.extract_all_books():
         my_library.add_to_list_of_books(book)
 
+
       if not my_library.list_of_books:
-        raise ValueError('No books available in designated locations, please try again')
+        raise ValueError(
+          'No books available in designated '
+          'locations, please try again'
+        )
 
       return my_library
     except Exception as e:
@@ -40,16 +43,12 @@ class PersistBooksToAppFeature:
       self,
       new_library: Library
   ) -> bool:
-    try:
-      if not self.repository.check_if_created():
-        raise FileNotFoundError
+    if not self.repository.check_if_created():
+      raise FileNotFoundError("Library repository does not exist")
 
-      if self.repository.check_if_full():
-        self.repository.clear_library()
+    if self.repository.check_if_full():
+      self.repository.clear_library()
 
-      self.repository.store_library(new_library)
+    self.repository.store_library(new_library)
 
-      return self.repository.check_if_full()
-    except FileNotFoundError as e:
-      print("Library does not yet exist")
-      raise e
+    return self.repository.check_if_full()

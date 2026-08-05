@@ -9,7 +9,7 @@ class LibraryRepository(Protocol):
   ) -> bool:
     ...
 
-  def check_if_full(
+  def check_if_populated(
       self
   ) -> bool:
     ...

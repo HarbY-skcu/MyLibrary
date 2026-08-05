@@ -1,9 +1,11 @@
+
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
+from ...Domain.models.basemodel import Base
 
 from .covers import Covers
-from ...Domain.models.basemodel import Base
 
 class Books(Base):
 
@@ -29,4 +31,4 @@ class Books(Base):
     nullable = False
   ) # foreign key related to the cover page
 
-  covers: Mapped['Covers'] = relationship(back_populates = 'covers')
+  covers: Mapped['Covers'] = relationship(back_populates = 'books')

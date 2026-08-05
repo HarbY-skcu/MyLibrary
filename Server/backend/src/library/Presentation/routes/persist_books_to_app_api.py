@@ -11,10 +11,12 @@ initial_persistence_router = APIRouter()
 
 def make_feature_controller(
 ) -> PersistBooksToAppFeature:
+  my_config = StaticConfigReader()
+  uri = my_config.get_storage_location()
   return PersistBooksToAppFeature(
     reader = WindowsFileSystemExtractor(),
-    repository = SqlLiteLibraryRepository(),
-    config = StaticConfigReader()
+    repository = SqlLiteLibraryRepository(uri[0]),
+    config = my_config
   )
 
 @initial_persistence_router.post('/library/', status_code = status.HTTP_201_CREATED)

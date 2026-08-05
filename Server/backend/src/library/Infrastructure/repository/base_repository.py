@@ -8,7 +8,7 @@ from ...Domain.data.books import Book
 from ...Domain.models.books import Books
 from ...Domain.models.basemodel import Base
 
-class SqlLiteLibraryRepository(LibraryRepository):
+class SqliteLibraryRepository(LibraryRepository):
   def __init__(
       self,
       uri: str
@@ -29,7 +29,7 @@ class SqlLiteLibraryRepository(LibraryRepository):
   ) -> None:
     with self.Session() as session:
       session.begin_nested()
-      for library_book in library.list_of_books:
+      for library_book in library:
         declarative_book = self._cast_to_declarative_base(library_book)
         session.add(declarative_book)
       session.commit()
@@ -43,6 +43,7 @@ class SqlLiteLibraryRepository(LibraryRepository):
       location = book.location,
       date_added = book.date_added,
       date_last_accessed = book.date_last_accessed,
+      file_type = book.file_type,
       cover_id = book.cover_image
     )
 
@@ -53,15 +54,14 @@ class SqlLiteLibraryRepository(LibraryRepository):
       session.query(Books).delete()
       session.commit()
 
-  def check_if_full(
+  def check_if_populated(
       self
   ) -> bool:
     with self.Session() as session:
       if session.query(Books).first() is None:
-        is_created = False
+        return False
       else:
-        is_created = True
-    return is_created
+        return True
 
   def check_if_created(
       self

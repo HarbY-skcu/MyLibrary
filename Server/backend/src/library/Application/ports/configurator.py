@@ -14,5 +14,5 @@ class ConfigReader(Protocol):
 
   def get_storage_location(
       self
-  ) -> List[str]:
+  ) -> str:
     ...

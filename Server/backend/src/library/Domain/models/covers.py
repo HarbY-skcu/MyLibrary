@@ -1,7 +1,7 @@
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .books import Books
 from ...Domain.models.basemodel import Base
 
 class Covers(Base):
