@@ -1,11 +1,8 @@
-import tempfile
-from typing import Dict, Iterator, List
+from typing import Dict, List
 
 import pytest
 from pathlib import Path
-from testcontainers.core.container import DockerContainer
 
-from ....Application.ports.extractor import BookExtractor
 from ....Infrastructure.extractor.base_extractor import WindowsFileSystemExtractor
 
 class TestBaseReader:

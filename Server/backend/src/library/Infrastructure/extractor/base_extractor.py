@@ -1,4 +1,4 @@
-from typing import List, Iterator
+from typing import List, Iterator, Tuple
 from pathlib import Path
 from datetime import date
 
@@ -16,6 +16,11 @@ class WindowsFileSystemExtractor(
     self.file_types = list()
     self.directories = list()
     self.empty_directories = list()
+
+  def get_invalid_directories(
+      self
+  ) -> List[str]:
+    return self.empty_directories
 
   def set_file_types(
       self,

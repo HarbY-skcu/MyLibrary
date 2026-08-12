@@ -1,0 +1,8 @@
+{
+  "book types": [".pdf", ".epub"],
+  "storage location": {
+    "driver" : "sqlite:///",
+    "source" : ""
+  },
+  "search directories": ["./Downloads"]
+}

@@ -2,6 +2,7 @@ from typing import List
 from pathlib import Path
 
 from ...Application.ports.configurator import ConfigReader
+import Server.database as db
 
 class StaticConfigReader(ConfigReader):
   def __init__(
@@ -20,7 +21,16 @@ class StaticConfigReader(ConfigReader):
       if book_types is not None
       else [str(Path.home() / 'Downloads')]
     )
-    self._uri = uri
+    self._uri = (
+      uri
+      if uri is not None
+      else f"sqlite:///{
+        ( 
+          Path(db.__file__).parent 
+          / 'library.db'
+        ).resolve()
+      }"
+    )
 
   def get_book_types(
       self

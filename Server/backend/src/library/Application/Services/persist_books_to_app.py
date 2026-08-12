@@ -1,3 +1,5 @@
+from typing import Tuple, List
+
 from ..ports.configurator import ConfigReader
 from ..ports.extractor import BookExtractor
 from ..ports.repository import LibraryRepository
@@ -17,7 +19,7 @@ class PersistBooksToAppFeature:
 
   def collect_all_books(
       self
-  ) -> Library:
+  ) -> Tuple[Library, List[str]]:
     try:
       directories = self.config.get_search_directories()
       book_types = self.config.get_book_types()
@@ -28,6 +30,7 @@ class PersistBooksToAppFeature:
       for book in self.reader.extract_all_books():
         my_library.add_to_list_of_books(book)
 
+      empty_directories = self.reader.get_invalid_directories()
 
       if not my_library.list_of_books:
         raise ValueError(
@@ -35,7 +38,7 @@ class PersistBooksToAppFeature:
           'locations, please try again'
         )
 
-      return my_library
+      return my_library, empty_directories
     except Exception as e:
       raise e
 

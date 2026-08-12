@@ -5,7 +5,7 @@ from ...Application.Services.persist_books_to_app import PersistBooksToAppFeatur
 from ...Domain.schemas.responses.initial_persistance import MakeAndPopulateLibraryResponse
 from ...Infrastructure.configurator.base_configurator import StaticConfigReader
 from ...Infrastructure.extractor.base_extractor import WindowsFileSystemExtractor
-from ...Infrastructure.repository.base_repository import SqlLiteLibraryRepository
+from ...Infrastructure.repository.base_repository import SqliteLibraryRepository
 
 initial_persistence_router = APIRouter()
 
@@ -15,7 +15,7 @@ def make_feature_controller(
   uri = my_config.get_storage_location()
   return PersistBooksToAppFeature(
     reader = WindowsFileSystemExtractor(),
-    repository = SqlLiteLibraryRepository(uri[0]),
+    repository = SqliteLibraryRepository(uri[0]),
     config = my_config
   )
 
@@ -24,11 +24,12 @@ async def make_and_populate_library_use_case(
   feature_controller: Annotated[make_feature_controller(), Depends()],
 ) -> MakeAndPopulateLibraryResponse:
   try:
-    my_library = feature_controller.collect_all_books()
+    my_library, invalid_dirs = feature_controller.collect_all_books()
     result_status = feature_controller.persist_all_books_to_new_library(my_library)
     return MakeAndPopulateLibraryResponse(
       success = result_status,
-      message = "Successfully initialized and populated library from repository"
+      message = "Successfully initialized and populated library from repository",
+      empty_directories = invalid_dirs
     )
   except Exception as e:
     raise HTTPException(

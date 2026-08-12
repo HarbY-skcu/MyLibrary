@@ -18,9 +18,16 @@ class TestPersistBooksToAppFeatureWithMocks:
   def mock_repository(self, mocker):
     return mocker.Mock()
 
-  @pytest.fixture
-  def mock_config(self, mocker):
-    return mocker.Mock()
+  @pytest.fixture(autouse = True)
+  def mock_config(self, mocker, monkeypatch):
+    mock = mocker.patch(
+      'Server.backend.src.library.Domain.data.books.StaticConfigReader'
+    )
+    mock.return_value.get_book_types.return_value = [
+      '.pdf',
+      '.epub'
+    ]
+    return mock
 
   @pytest.fixture
   def mock_service(self, mock_reader, mock_repository, mock_config):
@@ -76,7 +83,7 @@ class TestPersistBooksToAppFeatureWithMocks:
       iter([book1, book2])
     )
     # When
-    library = mock_service.collect_all_books()
+    library, _ = mock_service.collect_all_books()
 
     # Then
     assert len(library.list_of_books) == 2
