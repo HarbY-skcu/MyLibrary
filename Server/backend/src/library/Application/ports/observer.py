@@ -1,9 +1,10 @@
-from typing import Protocol, List, AsyncGenerator
+from typing import Protocol, List, AsyncGenerator, runtime_checkable
 
 from backend.src.library.Domain.data.notification import BookNotification
 
 
-class Observer(Protocol):
+
+class SystemObserver(Protocol):
   def set_observed_directories(
       self,
       directories: List[str]
@@ -12,5 +13,5 @@ class Observer(Protocol):
 
   async def monitor_system(
       self
-  ) -> BookNotification:
+  ) -> AsyncGenerator[BookNotification, None]:
     ...

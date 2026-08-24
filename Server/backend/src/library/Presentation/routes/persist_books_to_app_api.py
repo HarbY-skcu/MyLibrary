@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import Annotated
 
-from ...Application.Services.persist_books_to_app import PersistBooksToAppFeature
+from backend.src.library.Application.Features.persist_books_to_app import PersistBooksToAppFeature
 from ...Domain.schemas.responses.initial_persistance import MakeAndPopulateLibraryResponse
 from ...Infrastructure.configurator.base_configurator import StaticConfigReader
 from ...Infrastructure.extractor.base_extractor import WindowsFileSystemExtractor

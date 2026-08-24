@@ -3,9 +3,10 @@ from typing import List
 
 import pytest
 
-from backend.src.library.Application.Services.change_library_app_catalogue import ChangeLibraryCatalogueFeature
+from backend.src.library.Application.Features.change_library_app_catalogue import ChangeLibraryCatalogueFeature
 from backend.src.library.Application.ports.extractor import ChangedBookExtractor
 from backend.src.library.Application.ports.repository import BookRepository
+from backend.src.library.Application.Services.book_identifier_service import BookIdentifierService
 from backend.src.library.Domain.data.books import Book
 from backend.src.library.Domain.data.library import Library
 
@@ -102,7 +103,8 @@ class TestChangeLibraryCatalogueFeatureWithMocks:
 
     change_controller = ChangeLibraryCatalogueFeature(
       extractor = book_extractor,
-      repository = filled_book_repository
+      repository = filled_book_repository,
+      book_identity_service = BookIdentifierService()
     )
     change_controller.update_library(
       upserts = files_to_be_upserted
@@ -127,7 +129,8 @@ class TestChangeLibraryCatalogueFeatureWithMocks:
 
     change_controller = ChangeLibraryCatalogueFeature(
       extractor=book_extractor,
-      repository=empty_book_repository
+      repository=empty_book_repository,
+      book_identity_service=BookIdentifierService()
     )
 
     change_controller.update_library(
@@ -158,7 +161,8 @@ class TestChangeLibraryCatalogueFeatureWithMocks:
 
     change_controller = ChangeLibraryCatalogueFeature(
       extractor=book_extractor,
-      repository=filled_book_repository
+      repository=filled_book_repository,
+      book_identity_service=BookIdentifierService()
     )
     change_controller.update_library(
       upserts = files_to_be_upserted,

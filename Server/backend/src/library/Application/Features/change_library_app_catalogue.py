@@ -1,9 +1,10 @@
 from pathlib import Path
 from typing import Dict, List
 
-from ..ports.extractor import ChangedBookExtractor
-from ..ports.repository import BookRepository
-from ...Domain.data.library import Library
+from backend.src.library.Application.Services.book_identifier_service import BookIdentifierService
+from backend.src.library.Application.ports.extractor import ChangedBookExtractor
+from backend.src.library.Application.ports.repository import BookRepository
+from backend.src.library.Domain.data.library import Library
 
 
 class ChangeLibraryCatalogueFeature:
@@ -11,10 +12,12 @@ class ChangeLibraryCatalogueFeature:
   def __init__(
       self,
       extractor: ChangedBookExtractor,
-      repository: BookRepository
+      repository: BookRepository,
+      book_identity_service: BookIdentifierService
   ):
     self.extractor = extractor
     self.repository = repository
+    self.book_identity_service = book_identity_service
 
   def update_library(
       self,
@@ -53,18 +56,10 @@ class ChangeLibraryCatalogueFeature:
       self,
       events: Dict[str, str]
   ) -> List[Dict[str, str]]:
-    book_identifiers = list()
-    for full_file_name, parent_directory in events.items():
-      name, file_type = full_file_name.rsplit('.', 1)
-      location = str(Path(parent_directory))
-      book_identifiers.append(
-        {
-          'name': name,
-          'file_type': '.' + file_type,
-          'location': location
-        }
-      )
-    return book_identifiers
+    return [
+      self.book_identity_service.identify_book(full_file_name, parent_directory)
+      for full_file_name, parent_directory in events.items()
+    ]
 
   def retrieve_updated_library(
       self

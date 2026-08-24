@@ -41,3 +41,11 @@ class BookNotification:
         "Notification event locations must "
         "never be empty"
       )
+
+  def add_events(
+    self,
+    upserts: Dict[str, str],
+    deletes: Dict[str, str]
+  ):
+    self.events['upsert'] = upserts
+    self.events['delete'] = deletes

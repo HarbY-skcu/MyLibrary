@@ -1,60 +1,21 @@
-from typing import List
-
 import pytest
 from datetime import date
 
-from ....Application.Services.persist_books_to_app import PersistBooksToAppFeature
+from backend.src.library.Application.Features.persist_books_to_app import PersistBooksToAppFeature
+from ...fixtures.features.persist_books_to_app_feature_fixtures import PersistBooksToAppFeatureFixtures
 from ....Domain.data.books import Book
 from ....Domain.data.library import Library
 
 
-class TestPersistBooksToAppFeatureWithMocks:
-
-  @pytest.fixture
-  def mock_reader(self, mocker):
-    return mocker.Mock()
-
-  @pytest.fixture
-  def mock_repository(self, mocker):
-    return mocker.Mock()
-
-  @pytest.fixture(autouse = True)
-  def mock_config(self, mocker, monkeypatch):
-    mock = mocker.patch(
-      'Server.backend.src.library.Domain.data.books.StaticConfigReader'
-    )
-    mock.return_value.get_book_types.return_value = [
-      '.pdf',
-      '.epub'
-    ]
-    return mock
-
-  @pytest.fixture
-  def mock_service(self, mock_reader, mock_repository, mock_config):
-    return PersistBooksToAppFeature(
-      reader=mock_reader,
-      repository=mock_repository,
-      config=mock_config,
-    )
-
-  @pytest.fixture
-  def mocked_library(self):
-    my_library = Library()
-    my_library.add_to_list_of_books(
-      Book(
-        title="The Circle of Life",
-        location='test location',
-        file_type='.pdf',
-        date_added=date.fromisoformat('2002-02-02'),
-      )
-    )
-    return my_library
+class TestPersistBooksToAppFeatureWithMocks(
+  PersistBooksToAppFeatureFixtures
+):
 
   def test_collect_all_books_from_populated_files(
     self,
     mock_reader,
     mock_config,
-    mock_service
+    mock_feature
   ):
     # given
 
@@ -83,7 +44,7 @@ class TestPersistBooksToAppFeatureWithMocks:
       iter([book1, book2])
     )
     # When
-    library, _ = mock_service.collect_all_books()
+    library, _ = mock_feature.collect_all_books()
 
     # Then
     assert len(library.list_of_books) == 2
@@ -95,7 +56,7 @@ class TestPersistBooksToAppFeatureWithMocks:
       self,
       mock_config,
       mock_reader,
-      mock_service
+      mock_feature
   ):
     # Given
     dir1 = "C:\\Users\\User 1\\Downloads"
@@ -111,7 +72,7 @@ class TestPersistBooksToAppFeatureWithMocks:
 
     # When and Then
     with pytest.raises(FileNotFoundError) as err_info:
-      mock_service.collect_all_books()
+      mock_feature.collect_all_books()
 
     assert dir2 in str(err_info.value)
     assert dir1 not in str(err_info.value)
@@ -120,7 +81,7 @@ class TestPersistBooksToAppFeatureWithMocks:
       self,
       mock_config,
       mock_reader,
-      mock_service
+      mock_feature
   ):
     # Given
     dir1 = "C:\\Users\\User 1\\Downloads"
@@ -139,21 +100,21 @@ class TestPersistBooksToAppFeatureWithMocks:
       match = 'No books available in designated '
       'locations, please try again'
     ):
-      mock_service.collect_all_books()
+      mock_feature.collect_all_books()
 
   def test_persist_all_books_to_library(
       self,
       mock_repository,
-      mock_service,
+      mock_feature,
       mocked_library
   ):
     # Given
     mock_repository.check_if_created.return_value = True
-    mock_repository.check_if_full.side_effect = (False, True)
+    mock_repository.check_if_populated.side_effect = (False, True)
     mock_repository.store_library.return_value = None
 
     # When
-    result = mock_service.persist_all_books_to_new_library(mocked_library)
+    result = mock_feature.persist_all_books_to_new_library(mocked_library)
 
     # Then
     assert result is True
@@ -161,7 +122,7 @@ class TestPersistBooksToAppFeatureWithMocks:
   def test_if_no_place_to_persist_library(
       self,
       mock_repository,
-      mock_service,
+      mock_feature,
       mocked_library
   ):
     mock_repository.check_if_created.return_value = False
@@ -170,4 +131,4 @@ class TestPersistBooksToAppFeatureWithMocks:
         FileNotFoundError,
         match = 'Library repository does not exist'
     ):
-      mock_service.persist_all_books_to_new_library(mocked_library)
+      mock_feature.persist_all_books_to_new_library(mocked_library)

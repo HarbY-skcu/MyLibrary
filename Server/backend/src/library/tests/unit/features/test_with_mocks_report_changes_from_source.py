@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from ....Application.Services.report_changes_from_source import ReportChangesFromSourceFeature
+from backend.src.library.Application.Features.report_changes_from_source import ReportChangesFromSourceFeature
 from ....Application.ports.observer import Observer
 from ....Domain.data.notification import BookNotification
 
