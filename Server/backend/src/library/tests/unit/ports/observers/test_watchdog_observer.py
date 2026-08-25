@@ -8,6 +8,10 @@ from backend.src.library.Infrastructure.observer.watchdog_observer import Watchd
 from backend.src.library.tests.fixtures.ports.mocked_watchdog import MockedObserver, MockedEventQueue
 
 
+class MockedObserverWithUpserts:
+  pass
+
+
 class TestWatchdogObserver:
 
   def mocked_observer(
@@ -21,7 +25,7 @@ class TestWatchdogObserver:
       monkeypatch
   ):
     new_watchdog = WatchdogObserver(
-      observer = MockedObserver()
+      observer = MockedObserverWithUpserts()
     )
     return new_watchdog
 
@@ -72,8 +76,6 @@ class TestWatchdogObserver:
       directories=good_directories
     )
 
-    print(good_directories)
-    print(watchdog_observer_with_upserts.observed_dirs)
     # Then
     assert watchdog_observer_with_upserts.observed_dirs
     assert all(
@@ -91,8 +93,6 @@ class TestWatchdogObserver:
       directories=bad_directories
     )
 
-    print(bad_directories)
-    print(watchdog_observer_with_upserts.observed_dirs)
     # Then
     assert all(
       fake_directory not in watchdog_observer_with_upserts.observed_dirs
@@ -111,8 +111,6 @@ class TestWatchdogObserver:
       directories=mixed_directories
     )
 
-    print(mixed_directories)
-    print(watchdog_observer_with_upserts.observed_dirs)
     # Then
     assert watchdog_observer_with_upserts.observed_dirs
     assert all(
@@ -128,10 +126,11 @@ class TestWatchdogObserver:
       self,
       watchdog_observer_with_upserts: WatchdogObserver
   ) -> None:
-
+    # When
     watchdog_observer_with_upserts.set_observed_directories(
       directories=[]
     )
 
+    # Then
     assert not watchdog_observer_with_upserts.observed_dirs
 
