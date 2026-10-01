@@ -75,7 +75,7 @@ class TestChangeLibraryCatalogueFeatureWithMocks:
       mocker
   ) -> BookRepository:
     mock = mocker.Mock()
-    mock.get_updated_library.return_value = upserted_library
+    mock.get_library.return_value = upserted_library
     mock.check_if_created.return_value = True
     return mock
 
@@ -86,7 +86,7 @@ class TestChangeLibraryCatalogueFeatureWithMocks:
       mocker
   ) -> BookRepository:
     mock = mocker.Mock()
-    mock.get_updated_library.return_value = emptied_library
+    mock.get_library.return_value = emptied_library
     mock.check_if_created.return_value = True
     return mock
 

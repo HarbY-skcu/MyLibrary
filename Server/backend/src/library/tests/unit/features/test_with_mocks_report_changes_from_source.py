@@ -104,12 +104,11 @@ class TestReportChangesFromSourceFeatureWithMocks:
     )
 
     try:
-      upserted_files, deleted_files = await asyncio.gather(
-        anext_or_timeout(mock_reporter_with_both.consume_pending_upserts()),
-        anext_or_timeout(mock_reporter_with_both.consume_pending_deletes()),
+      notification = await anext_or_timeout(
+        mock_reporter_with_both.consume_pending_changes()
       )
-      assert upserted_files == {'file 1': 'location 1'}
-      assert deleted_files == {'file 2': 'location 2'}
+      assert notification.events['upsert'] == {'file 1': 'location 1'}
+      assert notification.events['delete'] == {'file 2': 'location 2'}
     finally:
       populate_task.cancel()
       await asyncio.gather(populate_task, return_exceptions=True)
@@ -124,8 +123,11 @@ class TestReportChangesFromSourceFeatureWithMocks:
     )
 
     try:
-      upserted_files = await anext_or_timeout(mock_reporter_with_upserts.consume_pending_upserts())
-      assert upserted_files == {'file 1': 'location 1'}
+      notification = await anext_or_timeout(
+        mock_reporter_with_upserts.consume_pending_changes()
+      )
+      assert notification.events['upsert'] == {'file 1': 'location 1'}
+      assert notification.events['delete'] == {}
     finally:
       populate_task.cancel()
       await asyncio.gather(populate_task, return_exceptions=True)
@@ -140,10 +142,11 @@ class TestReportChangesFromSourceFeatureWithMocks:
     )
 
     try:
-      deleted_files = await anext_or_timeout(
-        mock_reporter_with_deletes.consume_pending_deletes()
+      notification = await anext_or_timeout(
+        mock_reporter_with_deletes.consume_pending_changes()
       )
-      assert deleted_files == {'file 2': 'location 2'}
+      assert notification.events['delete'] == {'file 2': 'location 2'}
+      assert notification.events['upsert'] == {}
     finally:
       populate_task.cancel()
       await asyncio.gather(populate_task, return_exceptions=True)
