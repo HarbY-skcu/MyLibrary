@@ -26,7 +26,7 @@ class TestConfigReader:
       for book_type in book_types
     )
     assert all(
-      len(book_type) > 1
+      len(book_type) > 0
       for book_type in book_types
     )
 

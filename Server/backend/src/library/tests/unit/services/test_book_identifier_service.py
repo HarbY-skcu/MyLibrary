@@ -32,7 +32,7 @@ class TestBookIdentifierService(
     )
 
     assert not all(
-      extension in result['name']
+      extension in result['title']
       for extension in ['.pdf', '.epub']
     )
     assert any(

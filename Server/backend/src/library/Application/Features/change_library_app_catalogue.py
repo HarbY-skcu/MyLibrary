@@ -1,10 +1,12 @@
 from pathlib import Path
 from typing import Dict, List
+from datetime import date
 
 from backend.src.library.Application.Services.book_identifier_service import BookIdentifierService
 from backend.src.library.Application.ports.extractor import ChangedBookExtractor
 from backend.src.library.Application.ports.repository import BookRepository
 from backend.src.library.Domain.data.library import Library
+from backend.src.library.Domain.data.books import Book
 
 
 class ChangeLibraryCatalogueFeature:
@@ -35,22 +37,38 @@ class ChangeLibraryCatalogueFeature:
       self,
       upserts: Dict[str, str]
   ):
-    book_identifiers = self._get_book_identifiers(upserts)
     upserted_books = list(
       self.extractor.extract_books_from_list(
-        book_identifiers
+        upserts
       )
     )
-    for book in upserted_books:
-      self.repository.upsert_book_into_library(book)
+    upsert_library = Library(upserted_books)
+    self.repository.upsert_book_into_library(upsert_library)
 
   def _delete_from_library(
       self,
       deletes: Dict[str, str]
   ):
+    delete_library = Library()
     book_identifiers = self._get_book_identifiers(deletes)
-    for info in book_identifiers:
-      self.repository.delete_book_from_library(**info)
+    for identifier in book_identifiers:
+      delete_library.add_to_list_of_books(
+        self._make_book_from_identifiers(identifier)
+      )
+    self.repository.delete_book_from_library(delete_library)
+
+  def _make_book_from_identifiers(
+    self,
+    book_identifier: Dict[str, str]
+  ) -> Book:
+    return Book(
+      title= book_identifier['title'],
+      file_type=book_identifier['file_type'],
+      location = book_identifier['location'],
+      date_added= date.today(),
+      date_last_accessed= date.today(),
+      cover_image = 0
+    )
 
   def _get_book_identifiers(
       self,
@@ -64,5 +82,5 @@ class ChangeLibraryCatalogueFeature:
   def retrieve_updated_library(
       self
   ) -> Library:
-    updated_library = self.repository.get_updated_library()
+    updated_library = self.repository.get_library()
     return updated_library

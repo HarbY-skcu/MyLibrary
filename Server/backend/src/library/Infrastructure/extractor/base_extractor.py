@@ -1,4 +1,4 @@
-from typing import List, Iterator, Tuple
+from typing import List, Iterator, Tuple, Dict
 from pathlib import Path
 from datetime import date
 
@@ -6,9 +6,7 @@ from ...Application.ports.extractor import BookExtractor
 from ...Domain.data.library import Library
 from ...Domain.data.books import Book
 
-class WindowsFileSystemExtractor(
-  BookExtractor
-):
+class WindowsFileSystemExtractor:
 
   def __init__(
       self
@@ -56,6 +54,18 @@ class WindowsFileSystemExtractor(
         continue
       for book_locations in list_of_book_locations:
         yield self._create_book(book_locations)
+  
+  def extract_books_from_list(
+    self,
+    book_ids: Dict[str, str]
+  ) -> Library:
+    extracted_library = Library()
+    book_paths = [Path(parent + '/' + name) for name, parent in book_ids.items()]
+    for book_path in book_paths:
+      self._check_if_file_exists(book_path)
+      extracted_book = self._create_book(book_path)
+      extracted_library.add_to_list_of_books(extracted_book)
+    return extracted_library
 
   def _get_book_paths(
       self,
@@ -75,6 +85,16 @@ class WindowsFileSystemExtractor(
       raise FileNotFoundError(
         f"This directory does not exist, please change "
         f"the configuration: {directory.resolve()}"
+      )
+
+  @staticmethod
+  def _check_if_file_exists(
+    file: Path
+  ) -> None:
+    if not file.is_file():
+      raise FileNotFoundError(
+        f"The selected path is not a file. Please try "
+        f"again: {file.resolve()}"
       )
 
   @staticmethod

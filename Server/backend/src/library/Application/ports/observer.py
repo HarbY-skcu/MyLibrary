@@ -4,14 +4,15 @@ from backend.src.library.Domain.data.notification import BookNotification
 
 
 
-class SystemObserver(Protocol):
+class SystemMonitor(Protocol):
+
   def set_observed_directories(
       self,
       directories: List[str]
   ) -> None:
     ...
 
-  async def monitor_system(
+  def monitor_system(
       self
   ) -> AsyncGenerator[BookNotification, None]:
     ...

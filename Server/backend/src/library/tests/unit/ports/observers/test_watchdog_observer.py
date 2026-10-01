@@ -1,33 +1,22 @@
+import queue
 from pathlib import Path
 from typing import List
 
 import pytest
-from watchdog.observers import Observer
 
-from backend.src.library.Infrastructure.observer.watchdog_observer import WatchdogObserver
-from backend.src.library.tests.fixtures.ports.mocked_watchdog import MockedObserver, MockedEventQueue
-
+from backend.src.library.Infrastructure.observer.watchdog_observer import WatchdogMonitor
+from backend.src.library.tests.fixtures.ports.mocked_watchdog \
+  import (
+    MockedObserver,
+    mocked_event_queue_with_upsets,
+    upsert_events
+  )
 
 class MockedObserverWithUpserts:
   pass
 
 
-class TestWatchdogObserver:
-
-  def mocked_observer(
-      self
-  ) -> MockedObserver:
-    return MockedObserver()
-
-  @pytest.fixture
-  def watchdog_observer_with_upserts(
-      self,
-      monkeypatch
-  ):
-    new_watchdog = WatchdogObserver(
-      observer = MockedObserverWithUpserts()
-    )
-    return new_watchdog
+class TestWatchdogMonitor:
 
   @pytest.fixture
   def fixtures_base_dir(
@@ -65,10 +54,26 @@ class TestWatchdogObserver:
     cpy_dir_2 = bad_directories[:]
     cpy_dir_1.extend(cpy_dir_2)
     return cpy_dir_1
-
+  
+  @pytest.fixture
+  def wanted_events_observer(
+    self,
+    mocked_event_queue_with_upsets: queue.Queue
+  ) -> MockedObserver:
+    return MockedObserver(
+      mocked_event_queue_with_upsets
+    )
+  
+  @pytest.fixture
+  def watchdog_observer_with_upserts(
+    self,
+    wanted_events_observer: MockedObserver,
+  ) -> WatchdogMonitor:
+    return WatchdogMonitor(observer=wanted_events_observer)
+  
   def test_setting_observed_directories_with_valid_directories(
       self,
-      watchdog_observer_with_upserts: WatchdogObserver,
+      watchdog_observer_with_upserts: WatchdogMonitor,
       good_directories: List[str]
   ) -> None:
     # When
@@ -85,7 +90,7 @@ class TestWatchdogObserver:
 
   def test_setting_observed_directories_with_invalid_directories(
       self,
-      watchdog_observer_with_upserts: WatchdogObserver,
+      watchdog_observer_with_upserts: WatchdogMonitor,
       bad_directories: List[str]
   ) -> None:
     # When
@@ -101,7 +106,7 @@ class TestWatchdogObserver:
 
   def test_setting_observed_directories_with_valid_and_invalid_directories(
       self,
-      watchdog_observer_with_upserts: WatchdogObserver,
+      watchdog_observer_with_upserts: WatchdogMonitor,
       mixed_directories: List[str],
       good_directories: List[str],
       bad_directories: List[str]
@@ -124,7 +129,7 @@ class TestWatchdogObserver:
 
   def test_setting_observed_directories_with_no_directories(
       self,
-      watchdog_observer_with_upserts: WatchdogObserver
+      watchdog_observer_with_upserts: WatchdogMonitor
   ) -> None:
     # When
     watchdog_observer_with_upserts.set_observed_directories(
@@ -133,4 +138,3 @@ class TestWatchdogObserver:
 
     # Then
     assert not watchdog_observer_with_upserts.observed_dirs
-

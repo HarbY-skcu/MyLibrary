@@ -7,7 +7,7 @@ from ....Domain.data.books import Book
 from ....Domain.data.library import Library
 
 
-class TestPersistBooksToAppFeatureWithMocks(
+class TestPersistBooksToAppFeature(
   PersistBooksToAppFeatureFixtures
 ):
 

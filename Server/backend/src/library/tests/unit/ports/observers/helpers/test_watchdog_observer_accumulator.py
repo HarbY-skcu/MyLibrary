@@ -1,3 +1,6 @@
+import queue
+from pathlib import Path
+
 import pytest
 import asyncio
 
@@ -5,9 +8,13 @@ from backend.src.library.Infrastructure.observer.helpers.accumulator import Watc
 from backend.src.library.tests.fixtures.ports.mocked_watchdog \
   import (
     MockedObserver,
-    MockedEventQueueWithUpserts,
-    MockedEventQueueWithNonBookFiles,
-    MockedEventQueueWithMixedFiles
+    mocked_event_queue_with_deletes,
+    mocked_event_queue_with_mixed_files,
+    mocked_event_queue_with_upsets,
+    mocked_event_queue_with_unwanted_files,
+    mixed_file_type_events,
+    events_with_non_book_files,
+    upsert_events
   )
 
 
@@ -15,44 +22,47 @@ class TestWatchDogEventAccumulator:
 
   @pytest.fixture
   def wanted_events_observer(
-      self
+    self,
+    mocked_event_queue_with_upsets: queue.Queue
   ) -> MockedObserver:
     return MockedObserver(
-      MockedEventQueueWithUpserts()
+      mocked_event_queue_with_upsets
     )
 
   @pytest.fixture
   def unwanted_events_observer(
-      self
+    self,
+    mocked_event_queue_with_unwanted_files: queue.Queue
   ) -> MockedObserver:
     return MockedObserver(
-      MockedEventQueueWithNonBookFiles()
+      mocked_event_queue_with_unwanted_files
     )
 
   @pytest.fixture
   def mixed_events_observer(
-      self
+    self,
+    mocked_event_queue_with_mixed_files: queue.Queue
   ) -> MockedObserver:
     return MockedObserver(
-      MockedEventQueueWithMixedFiles()
+      mocked_event_queue_with_mixed_files
     )
 
   @pytest.fixture()
   def accumulator(
-      self
+    self
   ) -> WatchDogEventAccumulator:
     return WatchDogEventAccumulator(first_event_timeout=.5)
 
   @pytest.mark.asyncio
   async def test_that_events_are_accumulated(
-      self,
-      wanted_events_observer: MockedObserver,
-      accumulator: WatchDogEventAccumulator
+    self,
+    wanted_events_observer: MockedObserver,
+    accumulator: WatchDogEventAccumulator
   ) -> None:
     # When
     list_of_observed_events = asyncio.create_task(
       accumulator.accumulate_events(
-        observer = wanted_events_observer
+        event_queue = wanted_events_observer.event_queue
       )
     )
     await list_of_observed_events
@@ -68,7 +78,7 @@ class TestWatchDogEventAccumulator:
   ) -> None:
     # When
     list_of_observed_events = await accumulator.accumulate_events(
-      observer=unwanted_events_observer
+      event_queue=unwanted_events_observer.event_queue
     )
 
     # Then
@@ -81,10 +91,11 @@ class TestWatchDogEventAccumulator:
     accumulator: WatchDogEventAccumulator
   ):
     list_of_observed_events = await accumulator.accumulate_events(
-      observer=mixed_events_observer
+      event_queue=mixed_events_observer.event_queue
     )
 
     assert list_of_observed_events
     assert all(
-      Path(event.src_path).suffix in ['.pdf', '.epub']
+      Path(str(event.src_path)).suffix in ['.pdf', '.epub']
+      for event in list_of_observed_events
     )

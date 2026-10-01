@@ -17,7 +17,7 @@ class BookIdentifierService:
                        f'full name: {full_name}\nlocation: {location}')
     return (
       {
-        'name': name,
+        'title': name,
         'file_type': '.' + file_type,
         'location': location
       }

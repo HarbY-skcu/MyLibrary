@@ -35,19 +35,17 @@ class BookRepository(Protocol):
 
   def upsert_book_into_library(
       self,
-      book: Book
-  ):
-    ...
-
-  def delete_book_from_library(
-      self,
-      title: str,
-      location: str,
-      file_type: str
+      upsert_library: Library
   ) -> None:
     ...
 
-  def get_updated_library(
+  def delete_books_from_library(
+      self,
+      delete_library: Library
+  ) -> None:
+    ...
+
+  def get_library(
       self
   ) -> Library:
     ...

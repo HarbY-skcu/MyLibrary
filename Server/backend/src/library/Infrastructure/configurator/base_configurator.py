@@ -18,7 +18,7 @@ class StaticConfigReader(ConfigReader):
     )
     self._list_of_directories = (
       directories
-      if book_types is not None
+      if directories is not None
       else [str(Path.home() / 'Downloads')]
     )
     self._uri = (

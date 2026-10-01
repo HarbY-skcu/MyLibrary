@@ -1,5 +1,7 @@
 from typing import Protocol, Iterator, List, Tuple, Dict
 from Server.backend.src.library.Domain.data.books import Book
+from backend.src.library.Domain.data.library import Library
+
 
 class BookExtractor(Protocol):
   def set_search_directories(
@@ -40,6 +42,6 @@ class ChangedBookExtractor(Protocol):
 
   def extract_books_from_list(
       self,
-      book_ids = List[Dict[str, str]]
-  ) -> Iterator[Book]:
+      book_ids: Dict[str, str]
+  ) -> Library:
     ...

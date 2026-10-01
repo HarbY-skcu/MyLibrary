@@ -41,6 +41,26 @@ class TestBaseReader:
     )
     return extractor
 
+  @pytest.fixture
+  def upsert_book_ids(
+    self,
+    sample_data_directories
+  ) -> Dict[str, str]:
+    return {
+      "cc-shared-culture.epub": sample_data_directories['valid'],
+      "minimal-document.pdf": sample_data_directories['valid']
+    }
+
+  @pytest.fixture
+  def not_really_book_ids(
+    self,
+    sample_data_directories
+  ) -> Dict[str, str]:
+    return {
+      "" : sample_data_directories['valid'],
+      "." : sample_data_directories['invalid']
+    }
+
   @pytest.mark.parametrize(
     "data_directories",
     [
@@ -163,3 +183,24 @@ class TestBaseReader:
       book_extractor.set_search_directories(
         empty_directory_configuration
       )
+
+  def test_if_books_are_extracted_from_upserts(
+    self,
+    upsert_book_ids: Dict[str, str],
+    book_extractor: WindowsFileSystemExtractor
+  ):
+    extracted_library = book_extractor.extract_books_from_list(upsert_book_ids)
+
+    assert len(extracted_library.list_of_books) == len(upsert_book_ids)
+    assert all(
+        book.title + book.file_type in upsert_book_ids.keys()
+        for book in extracted_library.list_of_books
+    )
+
+  def test_if_system_does_not_attempt_to_extract_dirs_like_files(
+    self,
+    book_extractor: WindowsFileSystemExtractor,
+    not_really_book_ids: Dict[str, str]
+  ):
+    with pytest.raises(FileNotFoundError) as err_info:
+      extracted_library = book_extractor.extract_books_from_list(not_really_book_ids)
